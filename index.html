@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style>
+		img {
+			width: 100px;
+			height: 100px;			
+		}
+		img:hover {
+			width: 300px;
+			height: 300px;
+		}		
+	</style>
+</head>
+<body>
+	<label for="search">Suche nach:</label><br>
+	<input type="text" name="search" id="search"><br>
+	<button type="submit" id="btn" style="margin-top: 5px;">Suchen</button>
+	<hr>
+	<div id="output">		
+	</div>
+
+	<script	  src="https://code.jquery.com/jquery-3.6.0.min.js"
+			  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			  crossorigin="anonymous">			  	
+	</script>
+
+	<script>
+
+		let btn = document.querySelector('#btn')		
+		let output = document.querySelector('#output')
+
+		btn.addEventListener('click', async function(e) {
+
+			e.preventDefault()
+			
+			if(!search) return
+
+			let search = document.querySelector('#search').value
+
+			btn.innerText = "Warte..."
+
+			output.innerHTML = ""
+									
+			$.ajax({
+				url: 'http://localhost:8080/process.php',
+				method: 'POST',
+				data: {search},
+				success: async function(res) {
+					let data = JSON.parse(res)
+					let images = data.results
+					
+					images.map((image, i) => {
+						if(i%2) {
+							let img = document.createElement('img')
+							img.src = image
+							output.appendChild(img)
+						}
+					})
+					
+					document.querySelector('#search').value = ""
+
+					btn.innerText = "Suchen"
+				}
+			})
+		})
+
+	</script>
+</body>
+</html>
